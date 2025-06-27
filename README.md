@@ -42,9 +42,10 @@ A full-stack e-commerce chatbot that helps users search for products like laptop
 
 ---
 
-### 💻 Backend Setup (Flask)
+### 💻  Frontend & Backend Setup 
 
 ```bash
+### Backend(Flask)
 cd backend
 python -m venv venv
 source venv/bin/activate  # or venv\Scripts\activate on Windows
@@ -56,7 +57,7 @@ python database_setup.py
 # Start Flask server
 python app.py
 
-### 🌐 Frontend Setup (React)
+### Frontend(React)
 
 cd frontend
 npm install
