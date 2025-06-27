@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://ecommerce-chatbot-e5zr.onrender.com/api';
 
 export const apiCall = async (endpoint, method = 'GET', data = null, token = null) => {
   const url = `${API_BASE_URL}${endpoint}`;
