@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#667eea" />
+    <meta name="description" content="AI-powered e-commerce sales chatbot for electronics. Find laptops, smartphones, accessories and more through natural conversation." />
+    <meta name="keywords" content="ecommerce, chatbot, electronics, shopping, AI assistant, online store" />
+    <meta name="author" content="E-commerce Chatbot Team" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ecommerce-chatbot.com/" />
+    <meta property="og:title" content="E-commerce Sales Chatbot - Shop Electronics with AI" />
+    <meta property="og:description" content="Revolutionary AI chatbot for electronics shopping. Find products through natural conversation." />
+    <meta property="og:image" content="%PUBLIC_URL%/og-image.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://ecommerce-chatbot.com/" />
+    <meta property="twitter:title" content="E-commerce Sales Chatbot - Shop Electronics with AI" />
+    <meta property="twitter:description" content="Revolutionary AI chatbot for electronics shopping. Find products through natural conversation." />
+    <meta property="twitter:image" content="%PUBLIC_URL%/twitter-image.png" />
+
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon-16x16.png" />
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Google Fonts - Optimized loading -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <!-- CSS for loading screen -->
+    <style>
+        /* Loading screen styles */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #8f0756 0%,#af4d86 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        #loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-logo {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .loading-logo::before {
+            content: '🤖';
+            font-size: 3rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .loading-text {
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .loading-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 400;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Prevent flash of unstyled content */
+        body {
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow: hidden;
+        }
+
+        /* Show body content only after React loads */
+        #root {
+            opacity: 0;
+            transition: opacity 0.3s ease-in;
+        }
+
+        #root.loaded {
+            opacity: 1;
+        }
+
+        /* Accessibility improvements */
+        @media (prefers-reduced-motion: reduce) {
+            .loading-logo::before,
+            .loading-spinner {
+                animation: none;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            #loading-screen {
+                background: #000;
+                color: #fff;
+            }
+            
+            .loading-spinner {
+                border-color: #fff;
+                border-top-color: #000;
+            }
+        }
+    </style>
+
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "E-commerce Sales Chatbot",
+        "description": "AI-powered chatbot for electronics shopping",
+        "url": "https://ecommerce-chatbot.com",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "creator": {
+            "@type": "Organization",
+            "name": "E-commerce Chatbot Team"
+        },
+        "featureList": [
+            "Natural language product search",
+            "Real-time chat interface",
+            "Product recommendations",
+            "User authentication",
+            "Mobile responsive design"
+        ]
+    }
+    </script>
+
+    <title>E-commerce Sales Chatbot - Shop Electronics with AI</title>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" aria-label="Application loading">
+        <div class="loading-logo" aria-hidden="true"></div>
+        <h1 class="loading-text">E-commerce Chatbot</h1>
+        <p class="loading-subtitle">Powered by AI • Shop Smarter</p>
+        <div class="loading-spinner" aria-label="Loading spinner"></div>
+    </div>
+
+    <!-- Screen Reader Only Content -->
+    <div class="sr-only">
+        <h1>E-commerce Sales Chatbot</h1>
+        <p>An AI-powered chatbot application for shopping electronics including laptops, smartphones, and accessories.</p>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="root" role="main" aria-label="Main application"></div>
+
+    <!-- Fallback content for users with JavaScript disabled -->
+    <noscript>
+        <div style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #8f0756 0%, #bb4289 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            padding: 2rem;
+            box-sizing: border-box;
+        ">
+            <div style="
+                max-width: 600px;
+                background: rgba(255, 255, 255, 0.1);
+                padding: 3rem;
+                border-radius: 20px;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            ">
+                <h1 style="font-size: 2.5rem; margin-bottom: 1rem; font-weight: 700;">
+                    🤖 E-commerce Chatbot
+                </h1>
+                <h2 style="font-size: 1.5rem; margin-bottom: 2rem; font-weight: 400; opacity: 0.9;">
+                    JavaScript Required
+                </h2>
+                <p style="font-size: 1.2rem; line-height: 1.6; margin-bottom: 2rem; opacity: 0.8;">
+                    This application requires JavaScript to function properly. Please enable JavaScript in your browser settings to access the AI-powered shopping chatbot.
+                </p>
+                <div style="
+                    background: rgba(255, 255, 255, 0.1);
+                    padding: 1.5rem;
+                    border-radius: 10px;
+                    margin-bottom: 2rem;
+                    border-left: 4px solid rgba(255, 255, 255, 0.5);
+                ">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 1rem; font-weight: 600;">
+                        Features you're missing:
+                    </h3>
+                    <ul style="text-align: left; opacity: 0.9; line-height: 1.8;">
+                        <li>🔍 Smart product search with natural language</li>
+                        <li>💬 Real-time chat interface with AI assistant</li>
+                        <li>📱 Responsive design for all devices</li>
+                        <li>🛒 Interactive product browsing and filtering</li>
+                        <li>👤 Secure user authentication system</li>
+                        <li>📊 Personalized recommendations</li>
+                    </ul>
+                </div>
+                <p style="font-size: 1rem; opacity: 0.7;">
+                    For the best experience, please enable JavaScript and refresh this page.
+                </p>
+            </div>
+        </div>
+    </noscript>
+
+    <!-- Performance and Analytics Scripts -->
+    <script>
+        // Performance monitoring
+        window.addEventListener('load', function() {
+            // Hide loading screen after everything is loaded
+            setTimeout(function() {
+                const loadingScreen = document.getElementById('loading-screen');
+                const root = document.getElementById('root');
+                
+                if (loadingScreen) {
+                    loadingScreen.classList.add('hidden');
+                    setTimeout(function() {
+                        loadingScreen.style.display = 'none';
+                    }, 500);
+                }
+                
+                if (root) {
+                    root.classList.add('loaded');
+                    // Allow body to scroll again
+                    document.body.style.overflow = 'auto';
+                }
+            }, 1000);
+        });
+
+        // Error handling for uncaught JavaScript errors
+        window.addEventListener('error', function(e) {
+            console.error('Application error:', e.error);
+            
+            // Show user-friendly error message
+            const errorDiv = document.createElement('div');
+            errorDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #ff4757;
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+                z-index: 10000;
+                font-family: 'Inter', sans-serif;
+                font-size: 0.9rem;
+                max-width: 300px;
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+            `;
+            errorDiv.innerHTML = `
+                <strong>⚠️ Something went wrong</strong><br>
+                Please refresh the page or try again later.
+            `;
+            
+            document.body.appendChild(errorDiv);
+            
+            // Animate in
+            setTimeout(() => {
+                errorDiv.style.opacity = '1';
+                errorDiv.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                errorDiv.style.opacity = '0';
+                errorDiv.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (errorDiv.parentNode) {
+                        errorDiv.parentNode.removeChild(errorDiv);
+                    }
+                }, 300);
+            }, 5000);
+        });
+
+        // Service Worker registration for PWA capabilities
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('%PUBLIC_URL%/sw.js')
+                    .then(function(registration) {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(function(registrationError) {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // Detect if user is on mobile for enhanced UX
+        function isMobile() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // Add mobile class to body for mobile-specific styling
+        if (isMobile()) {
+            document.documentElement.classList.add('mobile');
+        }
+
+        // Prevent zoom on iOS Safari
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // Theme detection and application
+        function detectAndApplyTheme() {
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const prefersHighContrast = window.matchMedia && window.matchMedia('(prefers-contrast: high)').matches;
+            
+            if (prefersDark) {
+                document.documentElement.classList.add('dark-theme');
+            }
+            
+            if (prefersHighContrast) {
+                document.documentElement.classList.add('high-contrast');
+            }
+        }
+
+        // Apply theme on load
+        detectAndApplyTheme();
+
+        // Listen for theme changes
+        if (window.matchMedia) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', detectAndApplyTheme);
+            window.matchMedia('(prefers-contrast: high)').addEventListener('change', detectAndApplyTheme);
+        }
+
+        // Keyboard navigation enhancement
+        document.addEventListener('keydown', function(e) {
+            // Add visual focus indicators for keyboard navigation
+            if (e.key === 'Tab') {
+                document.body.classList.add('keyboard-navigation');
+            }
+        });
+
+        document.addEventListener('mousedown', function() {
+            document.body.classList.remove('keyboard-navigation');
+        });
+
+        // Connection status monitoring
+        function updateConnectionStatus() {
+            const isOnline = navigator.onLine;
+            const statusIndicator = document.getElementById('connection-status');
+            
+            if (!isOnline && !statusIndicator) {
+                const indicator = document.createElement('div');
+                indicator.id = 'connection-status';
+                indicator.style.cssText = `
+                    position: fixed;
+                    bottom: 20px;
+                    left: 20px;
+                    background: #ff6b6b;
+                    color: white;
+                    padding: 0.75rem 1rem;
+                    border-radius: 25px;
+                    font-family: 'Inter', sans-serif;
+                    font-size: 0.9rem;
+                    font-weight: 500;
+                    z-index: 10000;
+                    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                `;
+                indicator.innerHTML = '🔴 Offline - Limited functionality';
+                document.body.appendChild(indicator);
+            } else if (isOnline && statusIndicator) {
+                statusIndicator.style.background = '#51cf66';
+                statusIndicator.innerHTML = '🟢 Back online';
+                setTimeout(() => {
+                    if (statusIndicator.parentNode) {
+                        statusIndicator.parentNode.removeChild(statusIndicator);
+                    }
+                }, 3000);
+            }
+        }
+
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+
+        // Performance metrics collection
+        window.addEventListener('load', function() {
+            // Collect and log performance metrics
+            if ('performance' in window) {
+                setTimeout(() => {
+                    const perfData = performance.getEntriesByType('navigation')[0];
+                    if (perfData) {
+                        console.log('Performance Metrics:', {
+                            'Page Load Time': Math.round(perfData.loadEventEnd - perfData.fetchStart) + 'ms',
+                            'DOM Content Loaded': Math.round(perfData.domContentLoadedEventEnd - perfData.fetchStart) + 'ms',
+                            'First Paint': Math.round(perfData.responseEnd - perfData.fetchStart) + 'ms'
+                        });
+                    }
+                }, 0);
+            }
+        });
+
+        // Accessibility enhancements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Announce page changes to screen readers
+            const announcer = document.createElement('div');
+            announcer.setAttribute('aria-live', 'polite');
+            announcer.setAttribute('aria-atomic', 'true');
+            announcer.style.cssText = `
+                position: absolute;
+                left: -10000px;
+                width: 1px;
+                height: 1px;
+                overflow: hidden;
+            `;
+            document.body.appendChild(announcer);
+
+            // Store reference for React app to use
+            window.accessibilityAnnouncer = announcer;
+        });
+
+        // App configuration and constants
+        window.APP_CONFIG = {
+            API_BASE_URL: process.env.NODE_ENV === 'production' ? 'https://api.ecommerce-chatbot.com' : 'http://localhost:5000',
+            VERSION: '1.0.0',
+            FEATURES: {
+                VOICE_SEARCH: true,
+                DARK_MODE: true,
+                OFFLINE_MODE: false,
+                ANALYTICS: true
+            }
+        };
+    </script>
+
+    <!-- Critical CSS for above-the-fold content -->
+    <style>
+        /* Critical styles to prevent layout shift */
+        .app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Keyboard navigation styles */
+        .keyboard-navigation *:focus {
+            outline: 2px solid #667eea !important;
+            outline-offset: 2px !important;
+        }
+
+        /* High contrast theme */
+        .high-contrast {
+            filter: contrast(150%);
+        }
+
+        /* Dark theme support */
+        .dark-theme {
+            color-scheme: dark;
+        }
+
+        /* Mobile-specific optimizations */
+        .mobile {
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Reduce motion for users who prefer it */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</body>
+</html>
