@@ -7,6 +7,7 @@ from functools import wraps
 import bcrypt
 import json
 from chatbot_logic import ChatbotLogic
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -224,4 +225,5 @@ def get_chat_history(current_user_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get('PORT', 5000))  # Render sets PORT automatically
+    app.run(host='0.0.0.0', port=port)
