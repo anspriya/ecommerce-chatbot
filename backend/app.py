@@ -43,6 +43,10 @@ def token_required(f):
 @app.route('/')
 def index():
     return 'Welcome to the E-commerce Chatbot API'
+@app.route('/api')
+def api_home():
+    return "API Home"
+
 
 @app.route('/api/register', methods=['POST'])
 def register():
