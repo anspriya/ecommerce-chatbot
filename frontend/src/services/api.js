@@ -38,15 +38,15 @@ export const apiCall = async (endpoint, method = 'GET', data = null, token = nul
 };
 
 export const chatAPI = {
-  sendMessage: (message) => apiCall('/chat', 'POST', { message }),
-  getChatHistory: () => apiCall('/chat-history', 'GET'),
+  sendMessage: (message) => apiCall('/api/chat', 'POST', { message }),
+  getChatHistory: () => apiCall('/api/chat-history', 'GET'), // This also needs /api prefix
 };
 
 export const productsAPI = {
-  getAllProducts: () => apiCall('/products', 'GET'),
+  getAllProducts: () => apiCall('/api/products', 'GET'),
   searchProducts: (params) => {
     const queryString = new URLSearchParams(params).toString();
-    return apiCall(`/products/search?${queryString}`, 'GET');
+    return apiCall(`/api/products/search?${queryString}`, 'GET');
   },
-  getProductsByCategory: (category) => apiCall(`/products/category/${category}`, 'GET'),
+  getProductsByCategory: (category) => apiCall(`/api/products/category/${category}`, 'GET'),
 };
